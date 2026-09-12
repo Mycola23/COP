@@ -32,7 +32,7 @@ export const Sidebar = () => {
           <a className="sidebar__link" href="https://restcountries.com/" target="_blank">
             restcountries
           </a>{' '}
-          maybe in next time 😎))) (Lab 1)
+          time to data from api 😎))) (Lab 2)
         </p>
       </div>
     </aside>
