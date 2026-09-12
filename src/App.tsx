@@ -3,26 +3,92 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Header } from '@/components/layout/Header';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { GlassCard } from '@/components/ui/GlassCard';
-import { Counter } from '@/components/widgets/Counter';
 import { FilteredCountryList } from '@/components/widgets/FilteredCountryList';
 import { KpiCard } from '@/components/widgets/KpiCard';
-import { MOCK_COUNTRY_DTOS } from '@/data/mockCountriesDto';
-import { useCountrySummary } from '@/hooks/useCountryMapper';
-import type { KpiData, Metric, Theme } from '@/types/dashboard';
-import { buildKpis, buildRegionSeries, buildTopSeries, METRIC_LABELS } from './lib/aggregations';
-import { MetricBarChart } from './components/widgets/charts/MetricBarChart';
-import { RegionDoughnutChart } from './components/widgets/charts/RegionDoughnutChart';
+import { MetricBarChart } from '@/components/widgets/charts/MetricBarChart';
+import { RegionDoughnutChart } from '@/components/widgets/charts/RegionDoughnutChart';
+import { CountriesTable } from '@/components/widgets/CountriesTable';
+import { Loader } from '@/components/ui/Loader';
+import { Error } from '@/components/ui/Error';
+import { Empty } from '@/components/ui/Empty';
 
-const COUNTRIES = MOCK_COUNTRY_DTOS.map(useCountrySummary);
+import { useData } from '@/hooks/useData';
+import { buildKpis, buildRegionSeries, buildTopSeries, METRIC_LABELS } from '@/lib/aggregations';
+import type { Metric, Theme } from '@/types/dashboard';
 
 export default function App() {
   const [theme, setTheme] = useState<Theme>('dark');
   const [metric, setMetric] = useState<Metric>('population');
 
-  const kpis = useMemo(() => buildKpis(COUNTRIES), []);
-  const topSeries = useMemo(() => buildTopSeries(COUNTRIES, metric, 8), [metric]);
-  const regionSeries = useMemo(() => buildRegionSeries(COUNTRIES), []);
+  const { status, data: countries, error } = useData();
+
+  const kpis = useMemo(() => buildKpis(countries), [countries]);
+  const topSeries = useMemo(() => buildTopSeries(countries, metric, 8), [countries, metric]);
+  const regionSeries = useMemo(() => buildRegionSeries(countries), [countries]);
+
   const toggleTheme = () => setTheme(current => (current === 'dark' ? 'light' : 'dark'));
+  const retry = () => window.location.reload();
+
+  const renderDataContent = () => {
+    if (status === 'idle' || status === 'loading') {
+      return (
+        <GlassCard title="Global Dashboard" subtitle="fetching live data from restcountries.com">
+          <Loader />
+        </GlassCard>
+      );
+    }
+
+    if (status === 'error') {
+      return (
+        <GlassCard title="Global Dashboard" subtitle="request failed">
+          <Error message={error ?? 'Unknown error'} onRetry={retry} />
+        </GlassCard>
+      );
+    }
+
+    if (status === 'empty') {
+      return (
+        <GlassCard title="Global Dashboard" subtitle="no records">
+          <Empty />
+        </GlassCard>
+      );
+    }
+
+    return (
+      <>
+        <section className="grid-kpis" aria-label="Key metrics">
+          {kpis.map(kpi => (
+            <KpiCard key={kpi.id} kpi={kpi} />
+          ))}
+        </section>
+
+        <section className="grid-charts">
+          <GlassCard
+            title={`Top countries by ${METRIC_LABELS[metric]}`}
+            subtitle="live data comparison"
+            actions={<span className="chip">{topSeries.unit}</span>}
+          >
+            <MetricBarChart series={topSeries} theme={theme} />
+          </GlassCard>
+          <GlassCard title="Countries by region" subtitle="live distribution">
+            <RegionDoughnutChart series={regionSeries} theme={theme} />
+          </GlassCard>
+        </section>
+
+        <section className="grid-table">
+          <GlassCard title="Countries Directory" subtitle="sortable live data table">
+            <CountriesTable countries={countries} />
+          </GlassCard>
+        </section>
+
+        <section className="grid-explorer">
+          <GlassCard title="Country explorer" subtitle="controlled select + derived filtered list">
+            <FilteredCountryList items={countries} />
+          </GlassCard>
+        </section>
+      </>
+    );
+  };
 
   return (
     <DashboardLayout
@@ -30,43 +96,7 @@ export default function App() {
       sidebar={<Sidebar />}
       header={<Header metric={metric} onMetricChange={setMetric} isDark={theme === 'dark'} onToggleTheme={toggleTheme} />}
     >
-      <section className="grid-kpis" aria-label="Key metrics">
-        {kpis.map((kpi: KpiData) => (
-          <KpiCard key={kpi.id} kpi={kpi} />
-        ))}
-      </section>
-      <section className="grid-charts">
-        <GlassCard
-          title={`Top countries by ${METRIC_LABELS[metric]}`}
-          subtitle="comparison of tracked set"
-          actions={<span className="chip">{topSeries.unit}</span>}
-        >
-          <MetricBarChart series={topSeries} theme={theme} />
-        </GlassCard>
-        <GlassCard title="Countries by region" subtitle="distribution of tracked set">
-          <RegionDoughnutChart series={regionSeries} theme={theme} />
-        </GlassCard>
-      </section>
-      <section className="grid-bottom">
-        <GlassCard title="Quick set size" subtitle="useState + event handling demo">
-          <Counter label="Countries in quick preview" initial={4} min={1} max={COUNTRIES.length}>
-            {count => (
-              <ul className="preview-list">
-                {COUNTRIES.slice(0, count).map(country => (
-                  <li key={country.code} className="preview-list__item">
-                    <span aria-hidden="true">{country.flagEmoji}</span>
-                    <span>{country.name}</span>
-                    <span className="preview-list__muted">{country.region}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </Counter>
-        </GlassCard>
-        <GlassCard title="Country explorer" subtitle="controlled select + derived list">
-          <FilteredCountryList items={COUNTRIES} />
-        </GlassCard>
-      </section>
+      {renderDataContent()}
     </DashboardLayout>
   );
 }

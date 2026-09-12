@@ -35,7 +35,6 @@ export const buildRegionSeries = (countries: readonly CountrySummary[]): ChartSe
   return { labels: sorted.map(([region]) => region), values: sorted.map(([, count]) => count), unit: 'countries' };
 };
 
-/** YoY deltas are mocked until the API time-series lands in later labs. */
 const MOCK_DELTAS = { tracked: 8.3, population: 3.18, density: -1.42, un: 2.0 } as const;
 
 export const buildKpis = (countries: readonly CountrySummary[]): KpiData[] => {
