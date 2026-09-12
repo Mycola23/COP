@@ -9,7 +9,9 @@ import { KpiCard } from '@/components/widgets/KpiCard';
 import { MOCK_COUNTRY_DTOS } from '@/data/mockCountriesDto';
 import { useCountrySummary } from '@/hooks/useCountryMapper';
 import type { KpiData, Metric, Theme } from '@/types/dashboard';
-import { buildKpis } from './lib/aggregations';
+import { buildKpis, buildRegionSeries, buildTopSeries, METRIC_LABELS } from './lib/aggregations';
+import { MetricBarChart } from './components/widgets/charts/MetricBarChart';
+import { RegionDoughnutChart } from './components/widgets/charts/RegionDoughnutChart';
 
 const COUNTRIES = MOCK_COUNTRY_DTOS.map(useCountrySummary);
 
@@ -18,7 +20,8 @@ export default function App() {
   const [metric, setMetric] = useState<Metric>('population');
 
   const kpis = useMemo(() => buildKpis(COUNTRIES), []);
-
+  const topSeries = useMemo(() => buildTopSeries(COUNTRIES, metric, 8), [metric]);
+  const regionSeries = useMemo(() => buildRegionSeries(COUNTRIES), []);
   const toggleTheme = () => setTheme(current => (current === 'dark' ? 'light' : 'dark'));
 
   return (
@@ -32,7 +35,18 @@ export default function App() {
           <KpiCard key={kpi.id} kpi={kpi} />
         ))}
       </section>
-
+      <section className="grid-charts">
+        <GlassCard
+          title={`Top countries by ${METRIC_LABELS[metric]}`}
+          subtitle="comparison of tracked set"
+          actions={<span className="chip">{topSeries.unit}</span>}
+        >
+          <MetricBarChart series={topSeries} theme={theme} />
+        </GlassCard>
+        <GlassCard title="Countries by region" subtitle="distribution of tracked set">
+          <RegionDoughnutChart series={regionSeries} theme={theme} />
+        </GlassCard>
+      </section>
       <section className="grid-bottom">
         <GlassCard title="Quick set size" subtitle="useState + event handling demo">
           <Counter label="Countries in quick preview" initial={4} min={1} max={COUNTRIES.length}>
