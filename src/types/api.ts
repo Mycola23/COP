@@ -1,4 +1,9 @@
+import { Key, ReactNode } from 'react';
+
 export interface CountryDto {
+  code: Key | null | undefined;
+  flagEmoji: ReactNode;
+  name: ReactNode;
   names: { common: string; official: string };
   codes: { alpha_2: string; alpha_3: string };
   flag: { emoji: string; url_png: string };
