@@ -3,7 +3,6 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Header } from '@/components/layout/Header';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { GlassCard } from '@/components/ui/GlassCard';
-import { FilteredCountryList } from '@/components/widgets/FilteredCountryList';
 import { KpiCard } from '@/components/widgets/KpiCard';
 import { MetricBarChart } from '@/components/widgets/charts/MetricBarChart';
 import { RegionDoughnutChart } from '@/components/widgets/charts/RegionDoughnutChart';
@@ -11,49 +10,50 @@ import { CountriesTable } from '@/components/widgets/CountriesTable';
 import { Loader } from '@/components/ui/Loader';
 import { Error } from '@/components/ui/Error';
 import { Empty } from '@/components/ui/Empty';
-
-import { useData } from '@/hooks/useData';
+import { CountryFilterForm } from '@/components/widgets/CountryFilterForm';
+import { DEFAULT_COUNTRY_FILTERS } from '@/lib/filters';
 import { buildKpis, buildRegionSeries, buildTopSeries, METRIC_LABELS } from '@/lib/aggregations';
-import type { Metric, Theme } from '@/types/dashboard';
+import type { CountryFilters, Metric, Theme } from '@/types/dashboard';
+import { useCountriesQuery } from './hooks/useCountriesQuery';
 
 export default function App() {
   const [theme, setTheme] = useState<Theme>('dark');
   const [metric, setMetric] = useState<Metric>('population');
+  const [filters, setFilters] = useState<CountryFilters>(DEFAULT_COUNTRY_FILTERS);
 
-  const { status, data: countries, error } = useData();
+  const { countries, loading, error, debouncing, retry } = useCountriesQuery(filters);
 
   const kpis = useMemo(() => buildKpis(countries), [countries]);
   const topSeries = useMemo(() => buildTopSeries(countries, metric, 8), [countries, metric]);
   const regionSeries = useMemo(() => buildRegionSeries(countries), [countries]);
 
   const toggleTheme = () => setTheme(current => (current === 'dark' ? 'light' : 'dark'));
-  const retry = () => window.location.reload();
+  const resetFilters = () => setFilters(DEFAULT_COUNTRY_FILTERS);
 
-  const renderDataContent = () => {
-    if (status === 'idle' || status === 'loading') {
+  const updating = loading || debouncing;
+
+  const renderContent = () => {
+    if (error !== null) {
       return (
-        <GlassCard title="Global Dashboard" subtitle="fetching live data from restcountries.com">
+        <GlassCard title="Countries" subtitle="request failed">
+          <Error message={error} onRetry={retry} />
+        </GlassCard>
+      );
+    }
+    if (loading && countries.length === 0) {
+      return (
+        <GlassCard title="Countries" subtitle="fetching live data">
           <Loader />
         </GlassCard>
       );
     }
-
-    if (status === 'error') {
+    if (countries.length === 0) {
       return (
-        <GlassCard title="Global Dashboard" subtitle="request failed">
-          <Error message={error ?? 'Unknown error'} onRetry={retry} />
-        </GlassCard>
-      );
-    }
-
-    if (status === 'empty') {
-      return (
-        <GlassCard title="Global Dashboard" subtitle="no records">
+        <GlassCard title="Countries" subtitle="nothing matches the filters">
           <Empty />
         </GlassCard>
       );
     }
-
     return (
       <>
         <section className="grid-kpis" aria-label="Key metrics">
@@ -65,25 +65,23 @@ export default function App() {
         <section className="grid-charts">
           <GlassCard
             title={`Top countries by ${METRIC_LABELS[metric]}`}
-            subtitle="live data comparison"
+            subtitle="current selection"
             actions={<span className="chip">{topSeries.unit}</span>}
           >
             <MetricBarChart series={topSeries} theme={theme} />
           </GlassCard>
-          <GlassCard title="Countries by region" subtitle="live distribution">
+          <GlassCard title="Countries by region" subtitle="current selection">
             <RegionDoughnutChart series={regionSeries} theme={theme} />
           </GlassCard>
         </section>
 
         <section className="grid-table">
-          <GlassCard title="Countries Directory" subtitle="sortable live data table">
+          <GlassCard
+            title="Countries directory"
+            subtitle="live · filterable · sortable"
+            actions={<span className={`chip ${updating ? 'updating-chip' : ''}`}>{updating ? 'updating…' : `${countries.length} rows`}</span>}
+          >
             <CountriesTable countries={countries} />
-          </GlassCard>
-        </section>
-
-        <section className="grid-explorer">
-          <GlassCard title="Country explorer" subtitle="controlled select + derived filtered list">
-            <FilteredCountryList items={countries} />
           </GlassCard>
         </section>
       </>
@@ -93,10 +91,14 @@ export default function App() {
   return (
     <DashboardLayout
       theme={theme}
-      sidebar={<Sidebar />}
+      sidebar={
+        <Sidebar>
+          <CountryFilterForm value={filters} onChange={setFilters} onReset={resetFilters} />
+        </Sidebar>
+      }
       header={<Header metric={metric} onMetricChange={setMetric} isDark={theme === 'dark'} onToggleTheme={toggleTheme} />}
     >
-      {renderDataContent()}
+      {renderContent()}
     </DashboardLayout>
   );
 }

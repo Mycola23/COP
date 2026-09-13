@@ -634,3 +634,76 @@ body {
   gap: 16px;
   grid-template-columns: 1fr;
 }
+
+/* sidebar filter form  */
+.sidebar__filters {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.filter-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.filter-form__label {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.filter-form__input,
+.filter-form__select {
+  font: inherit;
+  font-size: 13px;
+  color: var(--text);
+  background: var(--control);
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  padding: 9px 12px;
+  width: 100%;
+}
+.filter-form__input::placeholder {
+  color: var(--muted);
+}
+.filter-form__check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--muted);
+  cursor: pointer;
+  user-select: none;
+}
+.filter-form__check input {
+  accent-color: var(--positive);
+  width: 16px;
+  height: 16px;
+}
+.filter-form__reset {
+  margin-top: 4px;
+  border: 1px solid var(--panel-border);
+  background: var(--control);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.filter-form__reset:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.filter-form__reset:not(:disabled):hover {
+  color: var(--negative);
+  border-color: var(--negative);
+}
+.updating-chip {
+  animation: pulse 1s ease-in-out infinite;
+}
+@keyframes pulse {
+  50% {
+    opacity: 0.45;
+  }
+}

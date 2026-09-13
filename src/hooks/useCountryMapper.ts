@@ -2,9 +2,9 @@ import type { CountryDto } from '@/types/api';
 import type { CountrySummary } from '@/types/dashboard';
 
 export const useCountrySummary = (dto: CountryDto): CountrySummary => ({
-  code: dto.codes.alpha_3,
+  code: dto.codes.alpha_3 || dto.codes.alpha_2 || dto.names.common,
   name: dto.names.common,
-  flagEmoji: dto.flag.emoji,
+  flagEmoji: dto.flag.emoji ?? '',
   region: dto.region,
   subregion: dto.subregion,
   capital: dto.capitals[0]?.name ?? '—',
