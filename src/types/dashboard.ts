@@ -5,6 +5,7 @@ export interface CountrySummary {
   code: string;
   name: string;
   flagEmoji: string;
+  flagDescription: string;
   region: string;
   subregion: string;
   capital: string;
@@ -13,7 +14,13 @@ export interface CountrySummary {
   currencyCodes: string[];
   languageNames: string[];
   isUnMember: boolean;
+  landlocked: boolean;
   timezoneCount: number;
+  timezones: string[];
+  borders: string[];
+  memberships: Record<string, boolean>;
+  links: Record<string, string | undefined>;
+  carsDrivingSide: string;
 }
 
 export interface KpiData {

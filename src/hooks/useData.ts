@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { fetchAllCountries } from '@/api/countriesApi';
-import { useCountrySummary } from '@/hooks/useCountryMapper';
+import { mapCountrySummary } from '@/hooks/useCountryMapper';
 import type { CountrySummary } from '@/types/dashboard';
 
 export type CountriesStatus = 'idle' | 'loading' | 'success' | 'error' | 'empty';
@@ -25,7 +25,7 @@ export function useData(): CountriesState {
       setState({ status: 'loading', data: [], error: null });
       try {
         const dtos = await fetchAllCountries(controller.signal);
-        const summaries = dtos.map(useCountrySummary);
+        const summaries = dtos.map(mapCountrySummary);
 
         if (summaries.length === 0) {
           setState({ status: 'empty', data: [], error: null });

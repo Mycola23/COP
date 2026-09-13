@@ -154,6 +154,7 @@ body {
   font: inherit;
   font-size: 14px;
   cursor: pointer;
+  text-decoration: none;
 }
 .sidebar__link:hover {
   color: var(--text);
@@ -563,6 +564,17 @@ body {
 .countries-table tbody tr:hover {
   background: var(--control);
 }
+.countries-table__row {
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+.countries-table__row:hover {
+  background: var(--control);
+}
+.countries-table__row:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+}
 .col-left {
   text-align: left;
 }
@@ -706,4 +718,395 @@ body {
   50% {
     opacity: 0.45;
   }
+}
+/* =========================================================
+   DETAILS PAGE & ENHANCED GLASS CARD
+   ========================================================= */
+
+.glass-card__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.details-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.details-flag {
+  font-size: 34px;
+  line-height: 1;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.25));
+}
+
+.glass-card:has(.details-title) .glass-card__subtitle {
+  font-size: 13px;
+  margin-top: 6px;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.details-grid {
+  display: grid;
+  gap: 18px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.details-section {
+  display: flex;
+  flex-direction: column;
+  background: var(--control);
+  border: 1px solid var(--panel-border);
+  border-radius: 14px;
+  padding: 18px 20px;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.details-section:hover {
+  border-color: rgba(146, 213, 232, 0.3);
+}
+
+.details-section--full {
+  grid-column: 1 / -1;
+}
+
+.details-section__title {
+  margin: 0 0 14px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.details-dl {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  row-gap: 10px;
+  column-gap: 16px;
+  margin: 0;
+  font-size: 13px;
+}
+
+.details-dl dt {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.details-dl dd {
+  margin: 0;
+  font-weight: 600;
+  color: var(--text);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.details-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.details-chips + .details-chips {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--panel-border);
+}
+
+/* chips */
+.chip {
+  font-size: 12px;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  padding: 5px 12px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  transition: all 0.15s ease;
+}
+
+.chip--accent {
+  background: rgba(46, 230, 168, 0.12);
+  color: var(--positive);
+  border-color: rgba(46, 230, 168, 0.35);
+  font-weight: 600;
+}
+
+.chip--muted {
+  color: var(--muted);
+  background: transparent;
+  border-style: dashed;
+}
+
+.chip--link {
+  text-decoration: none;
+  cursor: pointer;
+  background: var(--panel);
+  font-weight: 500;
+}
+
+.chip--link:hover {
+  color: var(--accent-strong);
+  border-color: var(--accent);
+  background: var(--control);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* flag desc */
+.details-desc {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  opacity: 0.9;
+}
+
+/* links*/
+.details-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.details-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  color: var(--accent);
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  transition: all 0.18s ease;
+}
+
+.details-links a:hover {
+  color: var(--accent-strong);
+  border-color: var(--accent);
+  background: var(--control);
+  transform: translateY(-1px);
+}
+
+/* back */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  padding: 8px 16px;
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  background: var(--control);
+  backdrop-filter: blur(10px);
+  transition: all 0.2s ease;
+}
+
+.back-link:hover {
+  color: var(--text);
+  border-color: var(--accent);
+  background: var(--panel);
+  transform: translateX(-3px);
+}
+
+/* not found*/
+.not-found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 48px 20px;
+  text-align: center;
+}
+
+.not-found__icon {
+  font-size: 40px;
+  color: var(--negative);
+  opacity: 0.85;
+}
+
+.not-found__title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.not-found__hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  max-width: 360px;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   COUNTRIES CARDS GRID
+   ========================================================= */
+
+.countries-page-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.countries-search-input {
+  width: 180px;
+  padding: 6px 10px;
+  font-size: 12px;
+}
+
+.countries-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.country-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--control);
+  border: 1px solid var(--panel-border);
+  border-radius: 12px;
+  overflow: hidden;
+  text-decoration: none;
+  color: var(--text);
+  transition:
+    transform 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
+  backdrop-filter: blur(8px);
+}
+
+.country-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+}
+
+.country-card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.country-card__flag-box {
+  position: relative;
+  height: 120px;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-bottom: 1px solid var(--panel-border);
+}
+
+.country-card__flag-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.25s ease;
+}
+
+.country-card:hover .country-card__flag-img {
+  transform: scale(1.05);
+}
+
+.country-card__flag-emoji {
+  font-size: 56px;
+  line-height: 1;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.3));
+}
+
+.country-card__code-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  background: rgba(0, 0, 0, 0.6);
+  color: var(--text);
+  padding: 2px 6px;
+  border-radius: 6px;
+  border: 1px solid var(--panel-border);
+  backdrop-filter: blur(4px);
+}
+
+.country-card__content {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 14px 14px;
+  gap: 4px;
+  flex: 1;
+}
+
+.country-card__name {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.country-card__region {
+  margin: 0 0 10px;
+  font-size: 12px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.country-card__stats {
+  margin-top: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--panel-border);
+}
+
+.country-card__stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.country-card__stat-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.country-card__stat-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent-strong);
+  font-variant-numeric: tabular-nums;
 }
