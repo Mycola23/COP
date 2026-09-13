@@ -67,6 +67,34 @@ export async function fetchCountries(filters: CountryFilters, signal?: AbortSign
 export const fetchAllCountries = (signal?: AbortSignal): Promise<CountryDto[]> =>
   fetchCountries({ query: '', region: 'all', limit: 0, unOnly: false }, signal);
 
+export async function fetchCountryByCode(code: string, signal?: AbortSignal): Promise<CountryDto | null> {
+  if (!BASE_URL) throw new Error('VITE_RESTCOUNTRIES_BASE is not configured');
+  if (!TOKEN) throw new Error('VITE_RESTCOUNTRIES_TOKEN is not configured');
+
+  const props = ['codes.alpha_3', 'codes.alpha_2', 'names.common'] as const;
+  for (const prop of props) {
+    const url = new URL(`/countries/v5/${prop}/${encodeURIComponent(code)}`, BASE_URL);
+    url.searchParams.set('response_fields_omit', 'names.translations,leaders');
+    try {
+      const response = await fetch(url, {
+        signal,
+        headers: { Authorization: `Bearer ${TOKEN}`, Accept: 'application/json' },
+      });
+      if (response.status === 404) continue;
+      if (!response.ok) {
+        const body = (await response.json().catch(() => null)) as V5ListResponse | null;
+        throw new Error(body?.errors?.[0]?.message ?? `${response.status}`);
+      }
+      const json = (await response.json()) as V5ListResponse;
+      if (json.data.objects?.[0]) return json.data.objects[0];
+    } catch (err) {
+      if ((err as { name?: string })?.name === 'AbortError') throw err;
+      continue;
+    }
+  }
+  return null;
+}
+
 const stableId = (dto: CountryDto): string => dto.codes.alpha_3 || dto.codes.alpha_2 || dto.names.common;
 
 const dedupeById = (dtos: CountryDto[]): CountryDto[] => {
