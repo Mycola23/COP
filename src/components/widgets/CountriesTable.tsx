@@ -40,15 +40,17 @@ const getCellValue = (country: CountrySummary, field: SortField): string | numbe
   }
 };
 
+const compareValues = (a: string | number, b: string | number): number =>
+  typeof a === 'number' && typeof b === 'number' ? a - b : String(a).localeCompare(String(b));
+
 const sortCountries = (source: readonly CountrySummary[], { field, direction }: SortConfig): CountrySummary[] => {
   const copy = [...source];
   const sign = direction === 'asc' ? 1 : -1;
 
   copy.sort((a, b) => {
-    const av = getCellValue(a, field);
-    const bv = getCellValue(b, field);
-    if (typeof av === 'number' && typeof bv === 'number') return (av - bv) * sign;
-    return String(av).localeCompare(String(bv)) * sign;
+    const primary = compareValues(getCellValue(a, field), getCellValue(b, field)) * sign;
+    if (primary !== 0) return primary;
+    return a.name.localeCompare(b.name);
   });
 
   return copy;
@@ -105,10 +107,10 @@ export const CountriesTable = ({ countries }: CountriesTableProps) => {
         </thead>
         <tbody>
           {sorted.map(country => (
-            <tr key={country.code}>
+            <tr key={`${country.code}::${country.name}`}>
               <td className="col-flag" aria-label={country.name}>
                 <span className="flag-emoji" role="img" aria-hidden="true">
-                  {country.flagEmoji}
+                  {country.flagEmoji || '🏳️'}
                 </span>
               </td>
               <td className="col-left">

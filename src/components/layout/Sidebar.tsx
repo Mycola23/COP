@@ -1,11 +1,15 @@
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 
 const NAV_ITEMS = [
   { id: 'overview', label: 'Overview', icon: '▦' },
   { id: 'countries', label: 'Countries', icon: '🌐' },
 ] as const;
 
-export const Sidebar = () => {
+interface SidebarProps {
+  children?: ReactNode;
+}
+
+export const Sidebar = ({ children }: SidebarProps) => {
   const [active, setActive] = useState<string>('overview');
 
   return (
@@ -26,13 +30,19 @@ export const Sidebar = () => {
           ))}
         </ul>
       </nav>
+      {children ? (
+        <div className="sidebar__filters">
+          <p className="sidebar__caption">Filter</p>
+          {children}
+        </div>
+      ) : null}
       <div className="sidebar__footer">
         <p className="sidebar__caption">Data from</p>
         <p className="sidebar__note">
           <a className="sidebar__link" href="https://restcountries.com/" target="_blank">
             restcountries
           </a>{' '}
-          time to data from api 😎))) (Lab 2)
+          time to search filter + debounce 😎))) (Lab 3)
         </p>
       </div>
     </aside>

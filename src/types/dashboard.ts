@@ -30,3 +30,10 @@ export interface ChartSeries {
   values: number[];
   unit: string;
 }
+
+export interface CountryFilters {
+  query: string;
+  region: string;
+  limit: number;
+  unOnly: boolean;
+}
