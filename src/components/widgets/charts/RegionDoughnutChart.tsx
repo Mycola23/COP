@@ -2,14 +2,15 @@ import { useMemo } from 'react';
 import type { ChartData, ChartOptions } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 import { palette } from '@/lib/chartSetup';
-import type { ChartSeries, Theme } from '@/types/dashboard';
+import type { ChartSeries } from '@/types/dashboard';
+import { useTheme } from '@/context/ThemeContext';
 
 interface RegionDoughnutChartProps {
   series: ChartSeries;
-  theme: Theme;
 }
 
-export const RegionDoughnutChart = ({ series, theme }: RegionDoughnutChartProps) => {
+export const RegionDoughnutChart = ({ series }: RegionDoughnutChartProps) => {
+  const { theme } = useTheme();
   const data = useMemo<ChartData<'doughnut'>>(
     () => ({
       labels: series.labels,

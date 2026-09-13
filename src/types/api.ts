@@ -6,7 +6,7 @@ export interface CountryDto {
   name: ReactNode;
   names: { common: string; official: string };
   codes: { alpha_2: string; alpha_3: string };
-  flag: { emoji: string; url_png: string };
+  flag: { emoji?: string; url_png: string; description?: string };
   region: string;
   subregion: string;
   capitals: { name: string }[];
@@ -17,4 +17,8 @@ export interface CountryDto {
   classification: { un_member: boolean };
   landlocked: boolean;
   timezones: string[];
+  borders?: string[];
+  memberships?: Record<string, boolean>;
+  links?: Record<string, string | undefined>;
+  cars?: { driving_side: string };
 }

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { formatCompact } from '@/lib/format';
 import type { CountrySummary } from '@/types/dashboard';
+import { useNavigate } from 'react-router-dom';
 
 export type SortField = 'name' | 'capital' | 'region' | 'population' | 'area' | 'density';
 export type SortDirection = 'asc' | 'desc';
@@ -72,6 +73,11 @@ const SortIndicator = ({ field, current }: { field: SortField; current: SortConf
 
 export const CountriesTable = ({ countries }: CountriesTableProps) => {
   const [sort, setSort] = useState<SortConfig>({ field: 'population', direction: 'desc' });
+  const navigate = useNavigate();
+
+  const openCountry = (code: string) => {
+    navigate(`/country/${encodeURIComponent(code)}`);
+  };
 
   const toggle = (field: SortField) =>
     setSort(prev =>
@@ -107,7 +113,13 @@ export const CountriesTable = ({ countries }: CountriesTableProps) => {
         </thead>
         <tbody>
           {sorted.map(country => (
-            <tr key={`${country.code}::${country.name}`}>
+            <tr
+              onClick={() => openCountry(country.code)}
+              className="countries-table__row"
+              role="button"
+              tabIndex={0}
+              key={`${country.code}::${country.name}`}
+            >
               <td className="col-flag" aria-label={country.name}>
                 <span className="flag-emoji" role="img" aria-hidden="true">
                   {country.flagEmoji || '🏳️'}

@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { fetchCountries } from '@/api/countriesApi';
-import { useCountrySummary } from '@/hooks/useCountryMapper';
+import { mapCountrySummary } from '@/hooks/useCountryMapper';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useFetch } from '@/hooks/useFetch';
 import type { CountryDto } from '@/types/api';
@@ -23,7 +23,7 @@ export function useCountriesQuery(filters: CountryFilters): CountriesQueryResult
 
   const { data, loading, error } = useFetch<CountryDto[]>(key, signal => fetchCountries(request, signal));
 
-  const countries = useMemo(() => (data ?? []).map(useCountrySummary), [data]);
+  const countries = useMemo(() => (data ?? []).map(mapCountrySummary), [data]);
 
   return {
     countries,

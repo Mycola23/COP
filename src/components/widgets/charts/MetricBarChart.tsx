@@ -3,14 +3,15 @@ import type { ChartData, ChartOptions } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
 import { axisColors, palette } from '@/lib/chartSetup';
 import { formatCompact } from '@/lib/format';
-import type { ChartSeries, Theme } from '@/types/dashboard';
+import type { ChartSeries } from '@/types/dashboard';
+import { useTheme } from '@/context/ThemeContext';
 
 interface MetricBarChartProps {
   series: ChartSeries;
-  theme: Theme;
 }
 
-export const MetricBarChart = ({ series, theme }: MetricBarChartProps) => {
+export const MetricBarChart = ({ series }: MetricBarChartProps) => {
+  const { theme } = useTheme();
   const data = useMemo<ChartData<'bar'>>(
     () => ({
       labels: series.labels,
