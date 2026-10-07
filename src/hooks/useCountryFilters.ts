@@ -1,30 +1,56 @@
-import { useMemo } from 'react';
+import { useEffect, useRef } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { selectFilters } from '@/store/selectors';
+import { setFilters, resetFilters } from '@/store/slices/filtersSlice';
 import { DEFAULT_COUNTRY_FILTERS } from '@/constants';
 import type { CountryFilters, CountryFiltersForm } from '@/types';
 
 export const useCountryFilters = (): CountryFiltersForm => {
-  const { control, reset, formState } = useForm<CountryFilters>({
-    defaultValues: DEFAULT_COUNTRY_FILTERS,
+  const dispatch = useAppDispatch();
+  const globalFilters = useAppSelector(selectFilters);
+
+  const {
+    control,
+    reset: formReset,
+    formState: { errors, isDirty },
+  } = useForm<CountryFilters>({
+    defaultValues: globalFilters,
     mode: 'onChange',
   });
 
   const values = useWatch({ control });
-  const { errors, isDirty } = formState;
   const hasErrors = Object.keys(errors).length > 0;
+  const prevSerializedRef = useRef<string>('');
 
-  const appliedFilters = useMemo<CountryFilters>(() => {
-    if (hasErrors || !values) {
-      return DEFAULT_COUNTRY_FILTERS;
+  useEffect(() => {
+    if (!hasErrors && values) {
+      const nextFilters: CountryFilters = {
+        query: values.query ?? '',
+        region: values.region ?? 'all',
+        limit: Number(values.limit ?? 0),
+        unOnly: Boolean(values.unOnly),
+      };
+
+      const serialized = JSON.stringify(nextFilters);
+      if (prevSerializedRef.current !== serialized) {
+        prevSerializedRef.current = serialized;
+        dispatch(setFilters(nextFilters));
+      }
     }
-    return values as CountryFilters;
-  }, [values, hasErrors]);
+  }, [values, hasErrors, dispatch]);
+
+  const handleReset = () => {
+    formReset(DEFAULT_COUNTRY_FILTERS);
+    prevSerializedRef.current = JSON.stringify(DEFAULT_COUNTRY_FILTERS);
+    dispatch(resetFilters());
+  };
 
   return {
     control,
     errors,
-    appliedFilters,
+    appliedFilters: globalFilters,
     isDirty,
-    reset,
+    reset: handleReset,
   };
 };

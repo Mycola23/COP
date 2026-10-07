@@ -1,22 +1,22 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { store } from '@/store';
+import { ThemeProvider } from '@/context/ThemeContext';
 import App from './App';
-import { ThemeProvider } from './context/ThemeContext';
-import { FiltersProvider } from './context/FiltersContext';
-import { CountriesProvider } from './context/CountriesContext';
-import './index.css';
+
 import '@/lib/chartSetup';
+import './index.css';
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <BrowserRouter>
+    <Provider store={store}>
       <ThemeProvider>
-        <FiltersProvider>
-          <CountriesProvider>
-            <App />
-          </CountriesProvider>
-        </FiltersProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
       </ThemeProvider>
-    </BrowserRouter>
-  </StrictMode>,
+    </Provider>
+  </StrictMode>
 );

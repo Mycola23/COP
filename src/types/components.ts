@@ -44,6 +44,19 @@ export interface RegionDoughnutChartProps {
   series: ChartSeries;
 }
 
+export interface InteractiveMetricChartProps {
+  countries: readonly CountrySummary[];
+  metric: Metric;
+  limit?: number;
+}
+
+export interface FavoriteToggleProps {
+  country?: CountrySummary;
+  code: string;
+  countryName?: string;
+  className?: string;
+}
+
 export type SortField = 'name' | 'capital' | 'region' | 'population' | 'area' | 'density';
 export type SortDirection = 'asc' | 'desc';
 
@@ -63,10 +76,10 @@ export interface CountriesTableProps {
 }
 
 export interface CountryFilterFormProps {
-  control: Control<CountryFilters>;
-  errors: FieldErrors<CountryFilters>;
-  isDirty: boolean;
-  onReset: () => void;
+  control?: Control<CountryFilters>;
+  errors?: FieldErrors<CountryFilters>;
+  isDirty?: boolean;
+  onReset?: () => void;
 }
 
 export interface KpiCardProps {
@@ -79,7 +92,7 @@ export interface ThemeToggleProps {
 }
 
 export interface PageProps {
-  appliedFilters: CountryFilters;
+  appliedFilters?: CountryFilters;
 }
 
 export interface MetricOption {

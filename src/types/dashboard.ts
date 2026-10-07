@@ -1,5 +1,6 @@
 export type Theme = 'dark' | 'light';
 export type Metric = 'population' | 'area' | 'density';
+export type ChartType = 'bar' | 'line';
 
 export interface CountrySummary {
   code: string;
