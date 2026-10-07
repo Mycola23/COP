@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { fetchCountryByCode } from '@/api/countriesApi';
-import { mapCountrySummary } from '@/hooks/useCountryMapper';
+import { mapCountrySummary } from '@/lib/mapCountryMapper';
 import { useFetch } from '@/hooks/useFetch';
 import type { CountryDto } from '@/types/api';
 import type { CountrySummary } from '@/types/dashboard';

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { fetchAllCountries } from '@/api/countriesApi';
-import { mapCountrySummary } from '@/hooks/useCountryMapper';
+import { mapCountrySummary } from '@/lib/mapCountryMapper';
 import type { CountrySummary } from '@/types/dashboard';
 
 export type CountriesStatus = 'idle' | 'loading' | 'success' | 'error' | 'empty';

@@ -1,24 +1,19 @@
-import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { GlassCard } from '@/components/ui/GlassCard';
 import { Loader } from '@/components/ui/Loader';
 import { Error as ErrorView } from '@/components/ui/Error';
 import { Empty } from '@/components/ui/Empty';
-import { useCountries } from '@/context/CountriesContext';
 import { formatCompact } from '@/lib/format';
+import { useCountriesQuery } from '@/hooks/useCountriesQuery';
+import { CountryFilters } from '@/types/dashboard';
 
-export function CountriesPage() {
-  const { countries, loading, error, debouncing, retry } = useCountries();
-  const [search, setSearch] = useState('');
+export interface PageProps {
+  appliedFilters: CountryFilters;
+}
 
+export function CountriesPage({ appliedFilters }: PageProps) {
+  const { countries, loading, error, debouncing, retry } = useCountriesQuery(appliedFilters);
   const updating = loading || debouncing;
-
-  // Локальний швидкий пошук за назвою або столицею
-  const filteredCountries = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    if (!q) return countries;
-    return countries.filter(c => c.name.toLowerCase().includes(q) || (c.capital && c.capital.toLowerCase().includes(q)));
-  }, [countries, search]);
 
   if (error !== null) {
     return (
@@ -50,34 +45,24 @@ export function CountriesPage() {
       subtitle="Click on any card to view full country statistics and borders"
       actions={
         <div className="countries-page-actions">
-          <input
-            type="search"
-            placeholder="Quick search..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="filter-form__input countries-search-input"
-          />
-          <span className={`chip ${updating ? 'updating-chip' : ''}`}>{updating ? 'updating…' : `${filteredCountries.length} countries`}</span>
+          <span className={`chip ${updating ? 'updating-chip' : ''}`}>{updating ? 'updating…' : `${countries.length} countries`}</span>
         </div>
       }
     >
-      {filteredCountries.length === 0 ? (
+      {countries.length === 0 ? (
         <div className="state state--empty">
           <span className="state__icon" aria-hidden="true">
             🔍
           </span>
           <p className="state__title">No countries found</p>
-          <p className="state__hint">No results matching “{search}”. Try another keyword.</p>
         </div>
       ) : (
         <div className="countries-grid">
-          {filteredCountries.map(country => {
-            // Безпечно перевіряємо посилання на зображення прапора або емодзі
+          {countries.map(country => {
             const flagUrl = 'flagUrl' in country ? (country as { flagUrl?: string }).flagUrl : undefined;
 
             return (
               <Link key={`${country.code}::${country.name}`} to={`/country/${encodeURIComponent(country.code)}`} className="country-card">
-                {/* Блок прапора (зображення або великий емодзі) */}
                 <div className="country-card__flag-box">
                   {flagUrl ? (
                     <img src={flagUrl} alt={`${country.name} flag`} className="country-card__flag-img" loading="lazy" />
@@ -88,8 +73,6 @@ export function CountriesPage() {
                   )}
                   <span className="country-card__code-badge">{country.code}</span>
                 </div>
-
-                {/* Коротка інформація */}
                 <div className="country-card__content">
                   <h3 className="country-card__name" title={country.name}>
                     {country.name}

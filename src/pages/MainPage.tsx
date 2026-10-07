@@ -7,9 +7,10 @@ import { CountriesTable } from '@/components/widgets/CountriesTable';
 import { KpiCard } from '@/components/widgets/KpiCard';
 import { MetricBarChart } from '@/components/widgets/charts/MetricBarChart';
 import { RegionDoughnutChart } from '@/components/widgets/charts/RegionDoughnutChart';
-import { useCountries } from '@/context/CountriesContext';
 import { buildKpis, buildRegionSeries, buildTopSeries, METRIC_LABELS } from '@/lib/aggregations';
 import type { Metric } from '@/types/dashboard';
+import { PageProps } from './CountriesPage';
+import { useCountriesQuery } from '@/hooks/useCountriesQuery';
 
 const METRICS: { id: Metric; label: string }[] = [
   { id: 'population', label: 'Population' },
@@ -17,8 +18,8 @@ const METRICS: { id: Metric; label: string }[] = [
   { id: 'density', label: 'Density' },
 ];
 
-export function MainPage() {
-  const { countries, loading, error, debouncing, retry } = useCountries();
+export function MainPage({ appliedFilters }: PageProps) {
+  const { countries, loading, error, debouncing, retry } = useCountriesQuery(appliedFilters);
   const [metric, setMetric] = useState<Metric>('population');
 
   const kpis = useMemo(() => buildKpis(countries), [countries]);

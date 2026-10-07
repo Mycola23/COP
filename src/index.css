@@ -711,6 +711,17 @@ body {
   color: var(--negative);
   border-color: var(--negative);
 }
+
+.filter-form__error {
+  margin: -4px 0 0;
+  font-size: 11px;
+  color: var(--negative);
+}
+.filter-form__input.is-invalid,
+.filter-form__select.is-invalid {
+  border-color: var(--negative);
+}
+
 .updating-chip {
   animation: pulse 1s ease-in-out infinite;
 }
