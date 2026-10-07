@@ -1,14 +1,7 @@
-import { Controller, type Control, type FieldErrors } from 'react-hook-form';
-import { LIMIT_OPTIONS, REGION_OPTIONS } from '@/lib/filters';
+import { Controller } from 'react-hook-form';
+import { LIMIT_OPTIONS, REGION_OPTIONS } from '@/constants';
 import { LIMIT_RULES, QUERY_RULES, REGION_RULES } from '@/lib/filterValidation';
-import type { CountryFilters } from '@/types/dashboard';
-
-interface CountryFilterFormProps {
-  control: Control<CountryFilters>;
-  errors: FieldErrors<CountryFilters>;
-  isDirty: boolean;
-  onReset: () => void;
-}
+import type { CountryFilterFormProps } from '@/types';
 
 export const CountryFilterForm = ({ control, errors, isDirty, onReset }: CountryFilterFormProps) => (
   <form

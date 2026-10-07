@@ -7,16 +7,10 @@ import { CountriesTable } from '@/components/widgets/CountriesTable';
 import { KpiCard } from '@/components/widgets/KpiCard';
 import { MetricBarChart } from '@/components/widgets/charts/MetricBarChart';
 import { RegionDoughnutChart } from '@/components/widgets/charts/RegionDoughnutChart';
-import { buildKpis, buildRegionSeries, buildTopSeries, METRIC_LABELS } from '@/lib/aggregations';
-import type { Metric } from '@/types/dashboard';
-import { PageProps } from './CountriesPage';
+import { buildKpis, buildRegionSeries, buildTopSeries } from '@/lib/aggregations';
+import { METRIC_LABELS, METRICS } from '@/constants';
 import { useCountriesQuery } from '@/hooks/useCountriesQuery';
-
-const METRICS: { id: Metric; label: string }[] = [
-  { id: 'population', label: 'Population' },
-  { id: 'area', label: 'Area' },
-  { id: 'density', label: 'Density' },
-];
+import type { Metric, PageProps } from '@/types';
 
 export function MainPage({ appliedFilters }: PageProps) {
   const { countries, loading, error, debouncing, retry } = useCountriesQuery(appliedFilters);

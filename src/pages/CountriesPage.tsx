@@ -5,11 +5,7 @@ import { Error as ErrorView } from '@/components/ui/Error';
 import { Empty } from '@/components/ui/Empty';
 import { formatCompact } from '@/lib/format';
 import { useCountriesQuery } from '@/hooks/useCountriesQuery';
-import { CountryFilters } from '@/types/dashboard';
-
-export interface PageProps {
-  appliedFilters: CountryFilters;
-}
+import type { PageProps } from '@/types';
 
 export function CountriesPage({ appliedFilters }: PageProps) {
   const { countries, loading, error, debouncing, retry } = useCountriesQuery(appliedFilters);
@@ -49,57 +45,40 @@ export function CountriesPage({ appliedFilters }: PageProps) {
         </div>
       }
     >
-      {countries.length === 0 ? (
-        <div className="state state--empty">
-          <span className="state__icon" aria-hidden="true">
-            🔍
-          </span>
-          <p className="state__title">No countries found</p>
-        </div>
-      ) : (
-        <div className="countries-grid">
-          {countries.map(country => {
-            const flagUrl = 'flagUrl' in country ? (country as { flagUrl?: string }).flagUrl : undefined;
+      <div className="countries-grid">
+        {countries.map(country => (
+          <Link key={`${country.code}::${country.name}`} to={`/country/${encodeURIComponent(country.code)}`} className="country-card">
+            <div className="country-card__flag-box">
+              <span className="country-card__flag-emoji" aria-hidden="true">
+                {country.flagEmoji || '🏳️'}
+              </span>
+              <span className="country-card__code-badge">{country.code}</span>
+            </div>
+            <div className="country-card__content">
+              <h3 className="country-card__name" title={country.name}>
+                {country.name}
+              </h3>
+              <p className="country-card__region">
+                {country.region} {country.capital ? `· ${country.capital}` : ''}
+              </p>
 
-            return (
-              <Link key={`${country.code}::${country.name}`} to={`/country/${encodeURIComponent(country.code)}`} className="country-card">
-                <div className="country-card__flag-box">
-                  {flagUrl ? (
-                    <img src={flagUrl} alt={`${country.name} flag`} className="country-card__flag-img" loading="lazy" />
-                  ) : (
-                    <span className="country-card__flag-emoji" aria-hidden="true">
-                      {country.flagEmoji || '🏳️'}
-                    </span>
-                  )}
-                  <span className="country-card__code-badge">{country.code}</span>
+              <div className="country-card__stats">
+                <div className="country-card__stat">
+                  <span className="country-card__stat-label">Population</span>
+                  <span className="country-card__stat-value">{formatCompact(country.population)}</span>
                 </div>
-                <div className="country-card__content">
-                  <h3 className="country-card__name" title={country.name}>
-                    {country.name}
-                  </h3>
-                  <p className="country-card__region">
-                    {country.region} {country.capital ? `· ${country.capital}` : ''}
-                  </p>
 
-                  <div className="country-card__stats">
-                    <div className="country-card__stat">
-                      <span className="country-card__stat-label">Population</span>
-                      <span className="country-card__stat-value">{formatCompact(country.population)}</span>
-                    </div>
-
-                    {'areaKm2' in country && country.areaKm2 ? (
-                      <div className="country-card__stat">
-                        <span className="country-card__stat-label">Area</span>
-                        <span className="country-card__stat-value">{formatCompact(country.areaKm2)} km²</span>
-                      </div>
-                    ) : null}
+                {country.areaKm2 ? (
+                  <div className="country-card__stat">
+                    <span className="country-card__stat-label">Area</span>
+                    <span className="country-card__stat-value">{formatCompact(country.areaKm2)} km²</span>
                   </div>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
-      )}
+                ) : null}
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
     </GlassCard>
   );
 }

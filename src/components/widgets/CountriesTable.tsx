@@ -1,28 +1,8 @@
 import { useMemo, useState } from 'react';
-import { formatCompact } from '@/lib/format';
-import type { CountrySummary } from '@/types/dashboard';
 import { useNavigate } from 'react-router-dom';
-
-export type SortField = 'name' | 'capital' | 'region' | 'population' | 'area' | 'density';
-export type SortDirection = 'asc' | 'desc';
-
-interface SortConfig {
-  field: SortField;
-  direction: SortDirection;
-}
-
-interface CountriesTableProps {
-  countries: readonly CountrySummary[];
-}
-
-const COLUMNS: { id: SortField; label: string; align: 'left' | 'right' }[] = [
-  { id: 'name', label: 'Country', align: 'left' },
-  { id: 'capital', label: 'Capital', align: 'left' },
-  { id: 'region', label: 'Region', align: 'left' },
-  { id: 'population', label: 'Population', align: 'right' },
-  { id: 'area', label: 'Area', align: 'right' },
-  { id: 'density', label: 'Density', align: 'right' },
-];
+import { formatCompact } from '@/lib/format';
+import { TABLE_COLUMNS } from '@/constants';
+import type { CountriesTableProps, CountrySummary, SortConfig, SortField } from '@/types';
 
 const getCellValue = (country: CountrySummary, field: SortField): string | number => {
   switch (field) {
@@ -58,13 +38,8 @@ const sortCountries = (source: readonly CountrySummary[], { field, direction }: 
 };
 
 const density = (c: CountrySummary) => c.population / c.areaKm2;
-
 const formatArea = (km2: number) => `${formatCompact(km2)} km²`;
-
-const formatDensity = (d: number) => {
-  if (!isFinite(d) || d === 0) return '—';
-  return `${formatCompact(d)} /km²`;
-};
+const formatDensity = (d: number) => (!isFinite(d) || d === 0 ? '—' : `${formatCompact(d)} /km²`);
 
 const SortIndicator = ({ field, current }: { field: SortField; current: SortConfig }) => {
   if (current.field !== field) return <span className="sort-arrow sort-arrow--idle">⇅</span>;
@@ -96,7 +71,7 @@ export const CountriesTable = ({ countries }: CountriesTableProps) => {
             <th scope="col" className="col-flag">
               Flag
             </th>
-            {COLUMNS.map(col => (
+            {TABLE_COLUMNS.map(col => (
               <th
                 key={col.id}
                 scope="col"

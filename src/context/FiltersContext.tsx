@@ -1,13 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, type ReactNode } from 'react';
-import type { CountryFilters } from '@/types/dashboard';
-import { DEFAULT_COUNTRY_FILTERS } from '@/lib/filters';
-
-interface FiltersCtx {
-  filters: CountryFilters;
-  setFilters: (next: CountryFilters) => void;
-  resetFilters: () => void;
-}
+import { DEFAULT_COUNTRY_FILTERS } from '@/constants';
+import type { CountryFilters, FiltersCtx } from '@/types';
 
 const FiltersContext = createContext<FiltersCtx | null>(null);
 

@@ -1,24 +1,20 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { fetchCountryByCode } from '@/api/countriesApi';
 import { mapCountrySummary } from '@/lib/mapCountryMapper';
 import { useFetch } from '@/hooks/useFetch';
-import type { CountryDto } from '@/types/api';
-import type { CountrySummary } from '@/types/dashboard';
-
-export interface CountryDetailsResult {
-  country: CountrySummary | null;
-  loading: boolean;
-  error: string | null;
-}
+import type { CountryDto, CountryDetailsResult } from '@/types';
 
 export function useCountryDetails(code: string | undefined): CountryDetailsResult {
-  const key = useMemo(() => `country:${code ?? ''}`, [code]);
+  const fetcher = useCallback(
+    async (signal: AbortSignal): Promise<CountryDto | null> => {
+      if (!code) return null;
+      return fetchCountryByCode(code, signal);
+    },
+    [code]
+  );
 
-  const { data, loading, error } = useFetch<CountryDto | null>(key, async signal => {
-    if (!code) return null;
-    return fetchCountryByCode(code, signal);
-  });
-
+  const { data, loading, error } = useFetch<CountryDto | null>(fetcher);
   const country = useMemo(() => (data ? mapCountrySummary(data) : null), [data]);
+
   return { country, loading, error };
 }

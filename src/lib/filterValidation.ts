@@ -1,6 +1,6 @@
 import type { RegisterOptions } from 'react-hook-form';
-import { LIMIT_OPTIONS, REGION_OPTIONS } from '@/lib/filters';
-import type { CountryFilters } from '@/types/dashboard';
+import { LIMIT_OPTIONS, REGION_OPTIONS } from '@/constants';
+import type { CountryFilters } from '@/types';
 
 export const QUERY_RULES: RegisterOptions<CountryFilters, 'query'> = {
   maxLength: { value: 40, message: 'Keep the search under 40 characters' },

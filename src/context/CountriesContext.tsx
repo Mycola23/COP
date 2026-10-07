@@ -2,16 +2,7 @@
 import { createContext, useContext, useMemo, type ReactNode } from 'react';
 import { useCountriesQuery } from '@/hooks/useCountriesQuery';
 import { useFilters } from './FiltersContext';
-import type { CountrySummary } from '@/types/dashboard';
-
-interface CountriesCtx {
-  countries: CountrySummary[];
-  loading: boolean;
-  error: string | null;
-  debouncing: boolean;
-  retry: () => void;
-  findByCode: (code: string) => CountrySummary | undefined;
-}
+import type { CountriesCtx, CountrySummary } from '@/types';
 
 const CountriesContext = createContext<CountriesCtx | null>(null);
 

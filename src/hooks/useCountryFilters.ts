@@ -1,15 +1,7 @@
 import { useMemo } from 'react';
-import { useForm, useWatch, type Control, type FieldErrors } from 'react-hook-form';
-import { DEFAULT_COUNTRY_FILTERS } from '@/lib/filters';
-import type { CountryFilters } from '@/types/dashboard';
-
-export interface CountryFiltersForm {
-  control: Control<CountryFilters>;
-  errors: FieldErrors<CountryFilters>;
-  appliedFilters: CountryFilters;
-  isDirty: boolean;
-  reset: () => void;
-}
+import { useForm, useWatch } from 'react-hook-form';
+import { DEFAULT_COUNTRY_FILTERS } from '@/constants';
+import type { CountryFilters, CountryFiltersForm } from '@/types';
 
 export const useCountryFilters = (): CountryFiltersForm => {
   const { control, reset, formState } = useForm<CountryFilters>({

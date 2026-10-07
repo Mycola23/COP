@@ -1,17 +1,6 @@
 import { formatCompact, round } from '@/lib/format';
-import type { ChartSeries, CountrySummary, KpiData, Metric } from '@/types/dashboard';
-
-export const METRIC_LABELS: Record<Metric, string> = {
-  population: 'population',
-  area: 'land area',
-  density: 'density',
-};
-
-const METRIC_UNITS: Record<Metric, string> = {
-  population: 'people',
-  area: 'km²',
-  density: 'people / km²',
-};
+import { METRIC_UNITS } from '@/constants';
+import type { ChartSeries, CountrySummary, KpiData, Metric } from '@/types';
 
 export const metricValue = (country: CountrySummary, metric: Metric): number => {
   if (metric === 'population') return country.population;
@@ -56,7 +45,6 @@ export const buildKpis = (countries: readonly CountrySummary[]): KpiData[] => {
   const [topRegion, topRegionCount] = [...regionCounts.entries()].reduce((a, b) => (b[1] > a[1] ? b : a));
   const topRegionShare = (topRegionCount / total) * 100;
 
-
   const topCountryByPopulation = countries.reduce((max, c) => (c.population > max.population ? c : max), countries[0]);
   const topShare = totalPopulation > 0 ? (topCountryByPopulation.population / totalPopulation) * 100 : 0;
 
@@ -68,11 +56,12 @@ export const buildKpis = (countries: readonly CountrySummary[]): KpiData[] => {
 
   const nonUn = total - unMembers;
   const nonUnShare = (nonUn / total) * 100;
+
   return [
     {
       id: 'tracked',
       title: 'Countries tracked',
-       value: String(total),
+      value: String(total),
       deltaPercent: round(topRegionShare),
       deltaAbsolute: `${topRegion}: ${topRegionCount} of ${total}`,
       hint: 'largest region share of the selection',

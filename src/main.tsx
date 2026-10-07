@@ -6,7 +6,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import { FiltersProvider } from './context/FiltersContext';
 import { CountriesProvider } from './context/CountriesContext';
 import './index.css';
-
+import '@/lib/chartSetup';
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>

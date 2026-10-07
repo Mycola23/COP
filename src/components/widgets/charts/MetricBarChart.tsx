@@ -1,14 +1,10 @@
 import { useMemo } from 'react';
 import type { ChartData, ChartOptions } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
-import { axisColors, palette } from '@/lib/chartSetup';
+import { axisColors, palette } from '@/constants';
 import { formatCompact } from '@/lib/format';
-import type { ChartSeries } from '@/types/dashboard';
 import { useTheme } from '@/context/ThemeContext';
-
-interface MetricBarChartProps {
-  series: ChartSeries;
-}
+import type { MetricBarChartProps } from '@/types';
 
 export const MetricBarChart = ({ series }: MetricBarChartProps) => {
   const { theme } = useTheme();

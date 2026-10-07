@@ -1,10 +1,5 @@
+import { FetchResult } from '@/types/hooks';
 import { useEffect, useState } from 'react';
-
-export interface FetchResult<T> {
-  data: T | null;
-  loading: boolean;
-  error: string | null;
-}
 
 export function useFetch<T>(
   fetcher: (signal: AbortSignal) => Promise<T>

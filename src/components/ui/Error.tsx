@@ -1,7 +1,4 @@
-interface ErrorStateProps {
-  message: string;
-  onRetry: () => void;
-}
+import type { ErrorStateProps } from '@/types';
 
 export const Error = ({ message, onRetry }: ErrorStateProps) => (
   <section className="state state--error" role="alert">
