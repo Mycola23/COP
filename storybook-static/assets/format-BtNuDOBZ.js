@@ -1,1 +1,0 @@
-import{n as e}from"./rolldown-runtime-DkW27tQK.js";var t,n,r;function i(){return(i=e((()=>{t=new Intl.NumberFormat(`en-US`,{notation:`compact`,maximumFractionDigits:1}),n=e=>t.format(e),r=e=>`${e>0?`+`:``}${e.toFixed(1)}%`})))()}export{r as n,i as r,n as t};
