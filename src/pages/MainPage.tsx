@@ -1,51 +1,53 @@
 import { useMemo, useState } from 'react';
-import { GlassCard } from '@/components/ui/GlassCard';
-import { Empty } from '@/components/ui/Empty';
-import { Error as ErrorView } from '@/components/ui/Error';
-import { Loader } from '@/components/ui/Loader';
+import { Card, Badge, StateView, Button } from '@/design-system';
 import { CountriesTable } from '@/components/widgets/CountriesTable';
 import { KpiCard } from '@/components/widgets/KpiCard';
 import { MetricBarChart } from '@/components/widgets/charts/MetricBarChart';
 import { RegionDoughnutChart } from '@/components/widgets/charts/RegionDoughnutChart';
-import { useCountries } from '@/context/CountriesContext';
-import { buildKpis, buildRegionSeries, buildTopSeries, METRIC_LABELS } from '@/lib/aggregations';
-import type { Metric } from '@/types/dashboard';
-
-const METRICS: { id: Metric; label: string }[] = [
-  { id: 'population', label: 'Population' },
-  { id: 'area', label: 'Area' },
-  { id: 'density', label: 'Density' },
-];
+import { InteractiveMetricChart } from '@/components/widgets/charts/InteractiveMetricChart';
+import { buildKpis, buildRegionSeries, buildTopSeries } from '@/lib/aggregations';
+import { METRIC_LABELS, METRICS } from '@/constants';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { selectDisplayCountries, selectCountriesError, selectCountriesIsLoading, selectFilters } from '@/store/selectors';
+import { fetchCountriesThunk } from '@/store/slices/countriesSlice';
+import type { Metric } from '@/types';
 
 export function MainPage() {
-  const { countries, loading, error, debouncing, retry } = useCountries();
+  const dispatch = useAppDispatch();
+  const countries = useAppSelector(selectDisplayCountries);
+  const loading = useAppSelector(selectCountriesIsLoading);
+  const error = useAppSelector(selectCountriesError);
+  const filters = useAppSelector(selectFilters);
+
   const [metric, setMetric] = useState<Metric>('population');
 
   const kpis = useMemo(() => buildKpis(countries), [countries]);
   const topSeries = useMemo(() => buildTopSeries(countries, metric, 8), [countries, metric]);
   const regionSeries = useMemo(() => buildRegionSeries(countries), [countries]);
 
-  const updating = loading || debouncing;
+  const retry = () => dispatch(fetchCountriesThunk(filters));
 
   if (error !== null) {
     return (
-      <GlassCard title="Countries" subtitle="request failed">
-        <ErrorView message={error} onRetry={retry} />
-      </GlassCard>
+      <Card title="Countries" subtitle="request failed">
+        <StateView type="error" title="Failed to load countries" subtitle={error} actionText="Retry" onAction={retry} />
+      </Card>
     );
   }
+
   if (loading && countries.length === 0) {
     return (
-      <GlassCard title="Countries" subtitle="fetching live data">
-        <Loader />
-      </GlassCard>
+      <Card title="Countries" subtitle="fetching live data">
+        <StateView type="loading" title="Loading countries live data..." />
+      </Card>
     );
   }
+
   if (countries.length === 0) {
     return (
-      <GlassCard title="Countries" subtitle="nothing matches the filters">
-        <Empty />
-      </GlassCard>
+      <Card title="Countries" subtitle="nothing matches the filters">
+        <StateView type="empty" title="No countries returned" subtitle="The current filter selection yielded 0 results." />
+      </Card>
     );
   }
 
@@ -58,41 +60,55 @@ export function MainPage() {
       </section>
 
       <section className="grid-charts">
-        <GlassCard
+        <Card
           title={`Top countries by ${METRIC_LABELS[metric]}`}
-          subtitle="current selection"
+          subtitle="Overview selection"
           actions={
             <div className="header__tabs" role="tablist" aria-label="Metric">
               {METRICS.map(m => (
-                <button
+                <Button
                   key={m.id}
-                  type="button"
-                  role="tab"
-                  aria-selected={metric === m.id}
-                  className={`header__tab  ${metric === m.id ? 'is-active' : ''}`}
+                  variant="ghost"
+                  size="sm"
+                  isActive={metric === m.id}
+                  className="header__tab"
                   onClick={() => setMetric(m.id)}
                 >
                   {m.label}
-                </button>
+                </Button>
               ))}
             </div>
           }
         >
           <MetricBarChart series={topSeries} />
-        </GlassCard>
-        <GlassCard title="Countries by region" subtitle="current selection">
+        </Card>
+
+        <Card title="Countries by region" subtitle="Distribution">
           <RegionDoughnutChart series={regionSeries} />
-        </GlassCard>
+        </Card>
+      </section>
+
+      <section className="grid-interactive">
+        <Card
+          title={`Interactive Dynamics (${METRIC_LABELS[metric]})`}
+          subtitle="Switch between Bar & Line view with highlighted favorites"
+        >
+          <InteractiveMetricChart countries={countries} metric={metric} limit={10} />
+        </Card>
       </section>
 
       <section className="grid-table">
-        <GlassCard
+        <Card
           title="Countries directory"
-          subtitle="click a row to open details"
-          actions={<span className={`chip ${updating ? 'updating-chip' : ''}`}>{updating ? 'updating…' : `${countries.length} rows`}</span>}
+          subtitle="Click a row to open details or star to favorite"
+          actions={
+            <Badge className={loading ? 'updating-chip' : ''}>
+              {loading ? 'updating…' : `${countries.length} rows`}
+            </Badge>
+          }
         >
           <CountriesTable countries={countries} />
-        </GlassCard>
+        </Card>
       </section>
     </>
   );

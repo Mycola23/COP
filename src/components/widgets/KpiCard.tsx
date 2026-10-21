@@ -1,9 +1,5 @@
 import { DeltaBadge } from '@/components/ui/DeltaBadge';
-import type { KpiData } from '@/types/dashboard';
-
-interface KpiCardProps {
-  kpi: KpiData;
-}
+import type { KpiCardProps } from '@/types';
 
 export const KpiCard = ({ kpi }: KpiCardProps) => (
   <article className="glass-card kpi-card">

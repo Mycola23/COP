@@ -22,3 +22,16 @@ export interface CountryDto {
   links?: Record<string, string | undefined>;
   cars?: { driving_side: string };
 }
+
+export interface V5Meta {
+  total: number;
+  count: number;
+  limit: number;
+  offset: number;
+  more: boolean;
+}
+
+export interface V5ListResponse {
+  data: { objects: CountryDto[]; meta: V5Meta };
+  errors?: { message: string }[];
+}
