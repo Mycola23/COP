@@ -4,7 +4,7 @@ import { formatCompact } from '@/lib/format';
 import { TABLE_COLUMNS } from '@/constants';
 import { FavoriteToggle } from '@/components/ui/FavoriteToggle';
 import { useAppSelector } from '@/store/hooks';
-import { selectFavorites } from '@/store/selectors';
+import { selectFavoritesItems } from '@/store/selectors';
 import type { CountriesTableProps, CountrySummary, SortConfig, SortField } from '@/types';
 
 const getCellValue = (country: CountrySummary, field: SortField): string | number => {
@@ -63,7 +63,7 @@ const SortIndicator = ({ field, current }: { field: SortField; current: SortConf
 export const CountriesTable = ({ countries }: CountriesTableProps) => {
   const [sort, setSort] = useState<SortConfig>({ field: 'population', direction: 'desc' });
   const navigate = useNavigate();
-  const favorites = useAppSelector(selectFavorites);
+  const favorites = useAppSelector(selectFavoritesItems);
 
   const openCountry = (code: string) => {
     navigate(`/country/${encodeURIComponent(code)}`);

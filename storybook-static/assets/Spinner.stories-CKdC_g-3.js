@@ -1,0 +1,1 @@
+import{n as e,t}from"./Spinner-B0S0N3PZ.js";import{n}from"./rolldown-runtime-DkW27tQK.js";var r,i,a;function o(){return(o=n((()=>{e(),r={title:`Design System/Atoms/Spinner`,component:t,tags:[`autodocs`]},i={},a=[`Default`]})))()}o();export{i as Default,a as __namedExportsOrder,r as default};

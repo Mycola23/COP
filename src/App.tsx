@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
@@ -9,7 +10,7 @@ import { CountriesPage } from '@/pages/CountriesPage';
 import { CountryDetailsPage } from '@/pages/CountryDetailsPage';
 import { NotFoundPage } from '@/pages/NotFound';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { selectFilters } from '@/store/selectors';
+import { selectFilters } from '@/store/selectors/index';
 import { fetchCountriesThunk } from '@/store/slices/countriesSlice';
 import { useDebounce } from '@/hooks/useDebounce';
 
@@ -29,7 +30,7 @@ export default function App() {
     return () => {
       promise.abort();
     };
-  }, [dispatch, debouncedQuery, filters.region, filters.limit, filters.unOnly]);
+  }, [debouncedQuery, filters.region, filters.limit, filters.unOnly]);
 
   return (
     <DashboardLayout

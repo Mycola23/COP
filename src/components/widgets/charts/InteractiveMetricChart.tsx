@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { Bar, Line } from 'react-chartjs-2';
 import type { ChartData, ChartOptions } from 'chart.js';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
-import { selectChartType, selectFavorites } from '@/store/selectors';
+import { selectChartType, selectFavoritesItems } from '@/store/selectors';
 import { setChartType } from '@/store/slices/uiSlice';
 import { axisColors, CHART_FAVORITE_COLORS, METRIC_UNITS } from '@/constants';
 import { formatCompact } from '@/lib/format';
@@ -14,7 +14,7 @@ export const InteractiveMetricChart = ({ countries, metric, limit = 8 }: Interac
   const { theme } = useTheme();
   const dispatch = useAppDispatch();
   const chartType = useAppSelector(selectChartType);
-  const favorites = useAppSelector(selectFavorites);
+  const favorites = useAppSelector(selectFavoritesItems);
 
   const topCountries = useMemo(() => {
     return [...countries]
