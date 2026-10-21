@@ -1,5 +1,9 @@
 import { formatSignedPercent } from '@/lib/format';
-import type { DeltaBadgeProps } from '@/types';
+
+interface DeltaBadgeProps {
+  percent: number;
+  absolute?: string;
+}
 
 export const DeltaBadge = ({ percent, absolute }: DeltaBadgeProps) => {
   const isPositive = percent >= 0;

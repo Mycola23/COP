@@ -1,6 +1,14 @@
+import type { ReactNode } from 'react';
 import { NavLink } from 'react-router-dom';
-import { NAV_ITEMS } from '@/constants';
-import type { SidebarProps } from '@/types';
+
+const NAV_ITEMS: { label: string; icon: string; to: string; end?: boolean }[] = [
+  { label: 'Overview', icon: '▦', to: '/', end: true },
+  { label: 'Countries', icon: '🌐', to: '/countries' },
+];
+
+interface SidebarProps {
+  children?: ReactNode;
+}
 
 export const Sidebar = ({ children }: SidebarProps) => (
   <aside className="sidebar">
@@ -35,7 +43,7 @@ export const Sidebar = ({ children }: SidebarProps) => (
         <a className="sidebar__link" href="https://restcountries.com/" target="_blank" rel="noreferrer noopener">
           restcountries
         </a>{' '}
-        time to routing 😎))) (Lab 4)
+        time to search filter + debounce 😎))) (Lab 3)
       </p>
     </div>
   </aside>

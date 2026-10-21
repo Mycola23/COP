@@ -1,6 +1,12 @@
 /* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, type ReactNode } from 'react';
-import type { Theme, ThemeCtx } from '@/types';
+import type { Theme } from '@/types/dashboard';
+
+interface ThemeCtx {
+  theme: Theme;
+  isDark: boolean;
+  toggleTheme: () => void;
+}
 
 const ThemeContext = createContext<ThemeCtx | null>(null);
 
