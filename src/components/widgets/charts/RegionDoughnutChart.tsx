@@ -1,9 +1,13 @@
 import { useMemo } from 'react';
 import type { ChartData, ChartOptions } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
-import { palette } from '@/constants';
+import { palette } from '@/lib/chartSetup';
+import type { ChartSeries } from '@/types/dashboard';
 import { useTheme } from '@/context/ThemeContext';
-import type { RegionDoughnutChartProps } from '@/types';
+
+interface RegionDoughnutChartProps {
+  series: ChartSeries;
+}
 
 export const RegionDoughnutChart = ({ series }: RegionDoughnutChartProps) => {
   const { theme } = useTheme();
@@ -22,18 +26,21 @@ export const RegionDoughnutChart = ({ series }: RegionDoughnutChartProps) => {
     [series],
   );
 
-  const options = useMemo<ChartOptions<'doughnut'>>(() => ({
-    responsive: true,
-    maintainAspectRatio: false,
-    cutout: '62%',
-    plugins: {
-      legend: {
-        position: 'right',
-        labels: { color: theme === 'dark' ? '#eaf6fa' : '#10313f', boxWidth: 12, boxHeight: 12 },
+  const options = useMemo<ChartOptions<'doughnut'>>(
+    () => ({
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '62%',
+      plugins: {
+        legend: {
+          position: 'right',
+          labels: { color: theme === 'dark' ? '#eaf6fa' : '#10313f', boxWidth: 12, boxHeight: 12 },
+        },
+        tooltip: { callbacks: { label: item => ` ${item.label}: ${item.parsed} countries` } },
       },
-      tooltip: { callbacks: { label: item => ` ${item.label}: ${item.parsed} countries` } },
-    },
-  }), [theme]);
+    }),
+    [theme],
+  );
 
   return (
     <div className="chart-box">

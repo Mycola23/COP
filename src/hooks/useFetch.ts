@@ -1,35 +1,35 @@
-import { FetchResult } from '@/types/hooks';
-import { useEffect, useState } from 'react';
+/* eslint-disable react-hooks/set-state-in-effect */
+/* eslint-disable react-hooks/refs */
+import { useEffect, useRef, useState } from 'react';
 
-export function useFetch<T>(
-  fetcher: (signal: AbortSignal) => Promise<T>
-): FetchResult<T> {
-  const [data, setData] = useState<T | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+export interface FetchResult<T> {
+  data: T | null;
+  loading: boolean;
+  error: string | null;
+}
+
+export function useFetch<T>(key: string, fetcher: (signal: AbortSignal) => Promise<T>): FetchResult<T> {
+  const [state, setState] = useState<FetchResult<T>>({ data: null, loading: true, error: null });
+
+  const fetcherRef = useRef(fetcher);
+  fetcherRef.current = fetcher;
 
   useEffect(() => {
-    let ignore = false;
     const controller = new AbortController();
-    fetcher(controller.signal)
-      .then(result => {
-        if (!ignore) {
-          setData(result);
-          setError(null);
-          setLoading(false);
-        }
+    setState(prev => ({ ...prev, loading: true, error: null }));
+
+    fetcherRef
+      .current(controller.signal)
+      .then(data => {
+        if (!controller.signal.aborted) setState({ data, loading: false, error: null });
       })
       .catch((err: unknown) => {
-        if (ignore || (err instanceof Error && err.name === 'AbortError')) return;
-        
-        setError(err instanceof Error ? err.message : 'Unknown error');
-        setLoading(false);
+        if (controller.signal.aborted || (err as { name?: string })?.name === 'AbortError') return;
+        setState({ data: null, loading: false, error: err instanceof Error ? err.message : 'Unknown error' });
       });
-    return () => {
-      ignore = true;
-      controller.abort();
-    };
-  }, [fetcher]);
 
-  return { data, loading, error };
+    return () => controller.abort();
+  }, [key]);
+
+  return state;
 }

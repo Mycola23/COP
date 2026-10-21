@@ -1,4 +1,11 @@
-import type { GlassCardProps } from '@/types';
+import type { ReactNode } from 'react';
+
+interface GlassCardProps {
+  title: ReactNode;
+  subtitle?: ReactNode;
+  actions?: ReactNode;
+  children: ReactNode;
+}
 
 export const GlassCard = ({ title, subtitle, actions, children }: GlassCardProps) => (
   <section className="glass-card">

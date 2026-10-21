@@ -1,5 +1,23 @@
-import { BASE_URL, TOKEN, PAGE_SIZE, MAX_PAGES } from '@/constants';
-import type { CountryDto, CountryFilters, V5ListResponse } from '@/types';
+import type { CountryDto } from '@/types/api';
+import type { CountryFilters } from '@/types/dashboard';
+
+const BASE_URL: string | undefined = import.meta.env.VITE_RESTCOUNTRIES_BASE;
+const TOKEN: string | undefined = import.meta.env.VITE_RESTCOUNTRIES_TOKEN;
+
+const PAGE_SIZE = 100;
+const MAX_PAGES = 5;
+
+interface V5Meta {
+  total: number;
+  count: number;
+  limit: number;
+  offset: number;
+  more: boolean;
+}
+interface V5ListResponse {
+  data: { objects: CountryDto[]; meta: V5Meta };
+  errors?: { message: string }[];
+}
 
 const buildUrl = (filters: CountryFilters, limit: number, offset: number): URL => {
   const url = new URL('/countries/v5', BASE_URL);
@@ -24,21 +42,6 @@ const requestPage = async (url: URL, signal?: AbortSignal): Promise<V5ListRespon
     throw new Error(`restcountries: ${message}`);
   }
   return (await response.json()) as V5ListResponse;
-};
-
-const stableId = (dto: CountryDto): string =>
-  dto.codes.alpha_3 || dto.codes.alpha_2 || dto.names.common;
-
-const dedupeById = (dtos: CountryDto[]): CountryDto[] => {
-  const seen = new Set<string>();
-  const unique: CountryDto[] = [];
-  for (const dto of dtos) {
-    const id = stableId(dto);
-    if (seen.has(id)) continue;
-    seen.add(id);
-    unique.push(dto);
-  }
-  return unique;
 };
 
 export async function fetchCountries(filters: CountryFilters, signal?: AbortSignal): Promise<CountryDto[]> {
@@ -91,3 +94,17 @@ export async function fetchCountryByCode(code: string, signal?: AbortSignal): Pr
   }
   return null;
 }
+
+const stableId = (dto: CountryDto): string => dto.codes.alpha_3 || dto.codes.alpha_2 || dto.names.common;
+
+const dedupeById = (dtos: CountryDto[]): CountryDto[] => {
+  const seen = new Set<string>();
+  const unique: CountryDto[] = [];
+  for (const dto of dtos) {
+    const id = stableId(dto);
+    if (seen.has(id)) continue;
+    seen.add(id);
+    unique.push(dto);
+  }
+  return unique;
+};

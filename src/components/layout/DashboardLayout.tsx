@@ -1,5 +1,11 @@
+import type { ReactNode } from 'react';
 import { useTheme } from '@/context/ThemeContext';
-import type { DashboardLayoutProps } from '@/types';
+
+interface DashboardLayoutProps {
+  sidebar: ReactNode;
+  header: ReactNode;
+  children: ReactNode;
+}
 
 export const DashboardLayout = ({ sidebar, header, children }: DashboardLayoutProps) => {
   const { theme } = useTheme();
